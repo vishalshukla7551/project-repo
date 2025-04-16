@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-
+import { Loader2Icon } from 'lucide-react';
 export default function SignUpForm() {
   const [formData, setFormData] = useState({
     name: '',
@@ -10,20 +10,21 @@ export default function SignUpForm() {
   })
 
   const [submitted, setSubmitted] = useState(false)
-
+  const [loading, setloading] = useState<boolean>(false);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
+    setloading(true);
     const res = await fetch('/api/signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
     })
-
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setloading(false);
     const result = await res.json()
     if (res.ok) {
       setSubmitted(true)
@@ -86,11 +87,13 @@ export default function SignUpForm() {
             />
           </div>
           <button
-            type="submit"
-            className="w-full py-3 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 transition duration-300"
-          >
-            Sign Up
-          </button>
+  disabled={loading}
+  type="submit"
+  className="w-full py-3 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 transition duration-300 flex items-center justify-center gap-2"
+>
+  Sign Up
+  {loading && <Loader2Icon className="animate-spin w-5 h-5" />}
+</button>
         </form>
       </div>
     </div>
