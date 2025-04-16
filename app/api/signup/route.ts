@@ -26,10 +26,14 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, user }, { status: 200 })
 
-  } catch (error: any) {
+  } catch (error:unknown) {
     console.error('Signup error:', error)
+    let message;
+    if (error instanceof Error) {
+        message=error.message
+      }
     return NextResponse.json(
-      { success: false, error: error.message || 'Internal Server Error' },
+      { success: false, error:message},
       { status: 500 }
     )
   }
